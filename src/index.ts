@@ -1,7 +1,11 @@
-import express from 'express';
+import express, { json } from 'express';
+import jsonfile from 'jsonfile';
+import datos from './db/datos.json';
 
 const app = express();
 const PORT = 45000;
+
+app.use(json());
 
 app.get('/api', (req, res) => {
 	res.json({
@@ -12,24 +16,15 @@ app.get('/api', (req, res) => {
 });
 
 app.get('/api/data', (req, res) => {
-	res.json([
-		{
-			username: 'jrodriguez',
-			email: 'jr@gmail.com',
-		},
-		{
-			username: 'jjuan',
-			email: 'jj@gmail.com',
-		},
-		{
-			username: 'carolina',
-			email: 'caro@gmail.com',
-		},
-		{
-			username: 'nestor',
-			email: 'nn@gmail.com',
-		},
-	]);
+	res.json(datos);
+});
+
+app.post('/api/data', (req, res) => {
+	datos.push(req.body);
+
+	jsonfile.writeFileSync('./src/db/datos.json', datos);
+
+	res.status(201).json(req.body);
 });
 
 app.use('*', (req, res) => {
